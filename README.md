@@ -1,5 +1,5 @@
-https://github.com/ocaoimh/kprof/blob/main/components/Capture%20d'%C3%A9cran%202026-01-08%20130807.png
 
+<img width="810" height="530" alt="image" src="https://github.com/user-attachments/assets/bfb838fe-66d8-4ad0-a337-6ec78351c33a" />
 
 
 # Run and deploy your AI Studio app
