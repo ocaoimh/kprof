@@ -4,7 +4,7 @@
 
 # User testing prototype
 
-Test in AI Studio: https://ai.studio/apps/drive/1edQOZ7E9ZZtimDae7-CAyblnWewyAm2q
+Test in AI Studio: https://ai.studio/apps/drive/15YZuqxpbKcGSx9fEedKY2aAlQPJHVoJx?fullscreenApplet=true
 
 ## Run Locally
 
