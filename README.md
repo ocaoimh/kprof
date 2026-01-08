@@ -1,6 +1,5 @@
 <div align="center">
-<img width="1200" height="475" alt="kprof" src="(https://github.com/ocaoimh/kprof/blob/main/components/Capture%20d'%C3%A9cran%202026-01-08%20130807.png)" />
-   ![screenshot](components/Capture%20d'%C3%A9cran%202026-01-08%20130807.png)
+![screenshot](components/Capture%20d'%C3%A9cran%202026-01-08%20130807.png)
 </div>
 
 # Run and deploy your AI Studio app
