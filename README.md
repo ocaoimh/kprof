@@ -1,6 +1,7 @@
-<div align="center">
-![screenshot](components/Capture%20d'%C3%A9cran%202026-01-08%20130807.png)
-</div>
+
+
+
+
 # Run and deploy your AI Studio app
 
 This contains everything you need to run your app locally.
