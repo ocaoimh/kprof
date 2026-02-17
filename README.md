@@ -1,5 +1,5 @@
 <div align="center">
-<img width="1200" height="475" alt="" src="https://github.com/ocaoimh/kprof/screenshot.png" />
+<img width="1200" height="475" alt="" src="https://raw.githubusercontent.com/ocaoimh/kprof/refs/heads/main/screenshot.png" />
 </div>
 
 https://github.com/ocaoimh/kprof/screenshot.png
