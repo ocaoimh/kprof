@@ -1,20 +1,40 @@
 
 export type GradeLevel = 'CE1' | 'CE2';
 
-export interface LessonSection {
-  title: string;
-  content: string;
+export interface LessonMeta {
+  titre: string;
+  domaine: string;
+  sous_domaine: string;
+  lesson: string;
+  duree: string;
+  date: string;
+}
+
+export interface LessonPlanResult {
+  type: string;
+  meta_tags: string;
+  popularity: string;
+  question: string;
+  activity: string;
+  palier: number;
+  classe: string;
+  fiche_no: string;
+  introductory_text: string;
+  lesson_meta: LessonMeta;
+  answer: string;
+  situations: string;
+  exercises: string;
+  audio_answer: string;
+  sources: any;
+  id_qa: string;
 }
 
 export interface LessonPlan {
   id: string;
   timestamp: number;
-  topic: string;
-  gradeLevel: GradeLevel;
-  question: string;
-  rappelCours: string;
-  sequencePedagogique: string;
-  exercices: string;
+  query: string;
+  username: string;
+  result: LessonPlanResult;
 }
 
 export interface LessonPlanRequest {

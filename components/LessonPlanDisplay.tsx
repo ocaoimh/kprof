@@ -1,34 +1,44 @@
 
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { LessonPlan } from '../types';
 
 interface LessonPlanDisplayProps {
   plan: LessonPlan;
+  onNewQuestion: () => void;
 }
 
-const MarkdownContent: React.FC<{ content: string }> = ({ content }) => {
-  // Simple markdown-to-html formatter for bold, lists, and headers
-  const formatted = content
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-4 mb-2">$1</h1>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mt-3 mb-2">$1</h2>')
-    .replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold mt-2 mb-1">$1</h3>')
-    .replace(/^\* (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
-    .replace(/^- (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
-    .replace(/\n/g, '<br />');
-
-  return <div className="text-slate-800 leading-relaxed" dangerouslySetInnerHTML={{ __html: formatted }} />;
-};
-
-export const LessonPlanDisplay: React.FC<LessonPlanDisplayProps> = ({ plan }) => {
-  const [activeSection, setActiveSection] = useState<'cours' | 'sequence' | 'exercices'>('cours');
+export const LessonPlanDisplay: React.FC<LessonPlanDisplayProps> = ({ plan, onNewQuestion }) => {
+  const [activeSection, setActiveSection] = useState<'answer' | 'situations' | 'exercises'>('answer');
+  const { result } = plan;
 
   return (
     <div className="w-full space-y-8 print-container">
       {/* Question Header */}
-      <div className="bg-white border-2 border-orange-200 rounded-3xl p-6 shadow-sm">
-        <h2 className="text-3xl font-extrabold text-orange-500">{plan.question}</h2>
+      <div className="bg-white border-2 border-orange-200 rounded-3xl p-6 shadow-sm flex justify-between items-start gap-4">
+        <div>
+           <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
+             {result.lesson_meta?.domaine} • {result.lesson_meta?.sous_domaine}
+           </div>
+           <h2 className="text-3xl font-extrabold text-orange-500">{result.question}</h2>
+        </div>
+        <button 
+          onClick={onNewQuestion}
+          className="no-print bg-orange-50 text-orange-500 hover:bg-orange-100 w-10 h-10 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+          title="Retour à l'accueil"
+        >
+          <i className="fa-solid fa-house"></i>
+        </button>
       </div>
+
+      {/* Intro Text */}
+      {result.introductory_text && (
+        <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 text-indigo-900 italic">
+          <i className="fa-solid fa-quote-left text-indigo-200 mr-2"></i>
+          {result.introductory_text}
+        </div>
+      )}
 
       {/* Grade Info Banner */}
       <div className="bg-white border-2 border-orange-200 rounded-3xl p-6 shadow-sm relative no-print">
@@ -41,89 +51,100 @@ export const LessonPlanDisplay: React.FC<LessonPlanDisplayProps> = ({ plan }) =>
           </div>
           <div>
             <p className="text-slate-800">
-              <span className="font-bold">⚠️ Cette réponse est adaptée pour la classe de <span className="underline">{plan.gradeLevel}</span> que tu as sélectionnée.</span> 
-              Mais je peux aussi te proposer des réponses adaptées pour les classes suivantes :
+              <span className="font-bold">⚠️ Cette réponse est proposée pour le niveau <span className="underline">{result.classe || 'primaire'}</span>.</span> 
+              Mais je peux aussi te proposer des réponses adaptées pour les autres classes.
             </p>
-            <div className="flex gap-4 mt-4">
-              <button className="flex-1 bg-white border border-orange-200 py-3 rounded-xl font-bold text-orange-700 flex justify-between px-6 hover:bg-orange-50 transition-all">
-                <span>{plan.gradeLevel === 'CE1' ? 'CE2' : 'CE1'}</span>
-                <i className="fa-solid fa-arrow-right"></i>
-              </button>
-              <button className="flex-1 bg-white border border-orange-200 py-3 rounded-xl font-bold text-orange-700 flex justify-between px-6 hover:bg-orange-50 transition-all">
-                <span>CP</span>
-                <i className="fa-solid fa-arrow-right"></i>
-              </button>
-            </div>
-            <p className="text-xs italic text-orange-600/70 mt-3">Clique sur la classe de ton choix pour voir la réponse adaptée.</p>
           </div>
         </div>
       </div>
 
       {/* Content Sections */}
       <div className="space-y-4">
-        <h3 className="text-2xl font-extrabold text-[#1E3A8A] mb-6">Pour la classe de {plan.gradeLevel}</h3>
+        <h3 className="text-2xl font-extrabold text-[#1E3A8A] mb-6">Contenu de la leçon</h3>
         
-        {/* Rappel du cours */}
+        {/* Fiche Pédagogique (Answer) */}
         <div className="space-y-4">
           <button 
-            onClick={() => setActiveSection('cours')}
+            onClick={() => setActiveSection('answer')}
             className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all ${
-              activeSection === 'cours' ? 'bg-[#FFF0D9] border-orange-200' : 'bg-white border-slate-100'
-            }`}
-          >
-            <div className="w-10 h-10 bg-[#1E3A8A] rounded-lg flex items-center justify-center text-white">
-              <i className="fa-solid fa-book-open"></i>
-            </div>
-            <span className="font-extrabold text-slate-800 uppercase tracking-widest">Rappel du cours</span>
-          </button>
-          {activeSection === 'cours' && (
-            <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
-              <MarkdownContent content={plan.rappelCours} />
-            </div>
-          )}
-
-          {/* Séquence Pédagogique */}
-          <button 
-            onClick={() => setActiveSection('sequence')}
-            className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all ${
-              activeSection === 'sequence' ? 'bg-[#FFF0D9] border-orange-200' : 'bg-white border-slate-100'
+              activeSection === 'answer' ? 'bg-[#FFF0D9] border-orange-200' : 'bg-white border-slate-100'
             }`}
           >
             <div className="w-10 h-10 bg-[#1E3A8A] rounded-lg flex items-center justify-center text-white">
               <i className="fa-solid fa-chalkboard-user"></i>
             </div>
-            <span className="font-extrabold text-slate-800 uppercase tracking-widest">Séquence pédagogique</span>
+            <span className="font-extrabold text-slate-800 uppercase tracking-widest">Fiche Pédagogique</span>
           </button>
-          {activeSection === 'sequence' && (
+          {activeSection === 'answer' && (
             <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
-              <MarkdownContent content={plan.sequencePedagogique} />
+              <article className="prose prose-slate max-w-none prose-headings:font-bold prose-headings:text-[#1E3A8A] prose-a:text-indigo-600 prose-strong:text-slate-900 prose-li:marker:text-orange-500">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {result.answer}
+                </ReactMarkdown>
+              </article>
+            </div>
+          )}
+
+          {/* Situations d'intégration */}
+          <button 
+            onClick={() => setActiveSection('situations')}
+            className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all ${
+              activeSection === 'situations' ? 'bg-[#FFF0D9] border-orange-200' : 'bg-white border-slate-100'
+            }`}
+          >
+            <div className="w-10 h-10 bg-[#1E3A8A] rounded-lg flex items-center justify-center text-white">
+              <i className="fa-solid fa-users-rectangle"></i>
+            </div>
+            <span className="font-extrabold text-slate-800 uppercase tracking-widest">Situations d'Intégration</span>
+          </button>
+          {activeSection === 'situations' && (
+            <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+              <article className="prose prose-slate max-w-none prose-headings:font-bold prose-headings:text-[#1E3A8A] prose-a:text-indigo-600 prose-strong:text-slate-900 prose-li:marker:text-emerald-500">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {result.situations}
+                </ReactMarkdown>
+              </article>
             </div>
           )}
 
           {/* Exercices */}
           <button 
-            onClick={() => setActiveSection('exercices')}
+            onClick={() => setActiveSection('exercises')}
             className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all ${
-              activeSection === 'exercices' ? 'bg-[#FFF0D9] border-orange-200' : 'bg-white border-slate-100'
+              activeSection === 'exercises' ? 'bg-[#FFF0D9] border-orange-200' : 'bg-white border-slate-100'
             }`}
           >
             <div className="w-10 h-10 bg-[#1E3A8A] rounded-lg flex items-center justify-center text-white">
               <i className="fa-solid fa-pencil-square"></i>
             </div>
-            <span className="font-extrabold text-slate-800 uppercase tracking-widest">Exercices</span>
+            <span className="font-extrabold text-slate-800 uppercase tracking-widest">Exercices et Corrigés</span>
           </button>
-          {activeSection === 'exercices' && (
+          {activeSection === 'exercises' && (
             <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
-              <MarkdownContent content={plan.exercices} />
+              <article className="prose prose-slate max-w-none prose-headings:font-bold prose-headings:text-[#1E3A8A] prose-a:text-indigo-600 prose-strong:text-slate-900 prose-li:marker:text-indigo-500">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {result.exercises}
+                </ReactMarkdown>
+              </article>
             </div>
           )}
         </div>
       </div>
       
-      <div className="flex justify-center pt-8 no-print">
-         <button onClick={() => window.print()} className="bg-indigo-600 text-white px-8 py-3 rounded-2xl font-bold shadow-lg flex items-center gap-3 hover:bg-indigo-700 transition-all">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-8 no-print">
+         <button 
+           onClick={() => window.print()} 
+           className="w-full sm:w-auto bg-indigo-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 hover:bg-indigo-700 transition-all"
+         >
            <i className="fa-solid fa-download"></i>
            Télécharger la réponse
+         </button>
+         <button 
+           onClick={onNewQuestion} 
+           className="w-full sm:w-auto bg-white text-indigo-600 border-2 border-indigo-600 px-8 py-3.5 rounded-2xl font-bold shadow-sm flex items-center justify-center gap-3 hover:bg-indigo-50 transition-all"
+         >
+           <i className="fa-regular fa-pen-to-square"></i>
+           Poser une autre question
          </button>
       </div>
     </div>

@@ -34,7 +34,7 @@ const App: React.FC = () => {
     try {
       const plan = await generateLessonPlan(request);
       setCurrentPlan(plan);
-      setHistory(prev => [plan, ...prev.filter(p => p.question !== plan.question)].slice(0, 15));
+      setHistory(prev => [plan, ...prev.filter(p => p.query !== plan.query)].slice(0, 15));
       setIsNewQuestion(false);
     } catch (err: any) {
       setError(err.message || 'Une erreur inattendue est survenue.');
@@ -65,9 +65,12 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Brand Header Bar */}
+      {/* Brand Header Bar - Now acts as a Home Button */}
       <div className="kprof-orange-bar no-print flex items-center px-4 justify-between">
-        <span className="text-white font-bold text-sm tracking-widest">kProf</span>
+        <button onClick={startNewQuestion} className="text-white font-bold text-sm tracking-widest hover:opacity-80 transition-opacity">
+          <i className="fa-solid fa-house mr-2"></i>
+          kProf
+        </button>
         <div className="flex gap-4">
           <div className="w-3 h-3 border border-white rounded-sm"></div>
           <div className="w-3 h-3 border border-white rounded-sm"></div>
@@ -101,14 +104,26 @@ const App: React.FC = () => {
               <div className="space-y-12">
                 {/* Result View */}
                 {isLoading ? (
-                  <div className="flex flex-col items-center justify-center py-20 space-y-6">
-                    <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
-                    <p className="text-xl font-bold text-slate-500 animate-pulse italic">kPROF prépare ta réponse pour le Sénégal...</p>
+                  <div className="flex flex-col items-center justify-center py-32 space-y-8">
+                     <div className="w-full max-w-md space-y-4">
+                        <div className="h-3 w-full bg-indigo-100 rounded-full overflow-hidden relative">
+                           {/* Indeterminate Progress Bar */}
+                            <div className="absolute top-0 left-0 h-full bg-[#1E3A8A] w-1/3 animate-[slide_2s_ease-in-out_infinite_alternate]"></div>
+                        </div>
+                        <p className="text-center text-[#1E3A8A] font-bold animate-pulse text-lg">kPROF recherche la meilleure réponse...</p>
+                        <style>{`
+                          @keyframes slide {
+                            0% { left: 0%; width: 20%; }
+                            50% { width: 60%; }
+                            100% { left: 100%; transform: translateX(-100%); width: 20%; }
+                          }
+                        `}</style>
+                    </div>
                   </div>
                 ) : (
                   currentPlan && (
                     <div className="animate-in slide-in-from-bottom-6 duration-500">
-                       <LessonPlanDisplay plan={currentPlan} />
+                       <LessonPlanDisplay plan={currentPlan} onNewQuestion={startNewQuestion} />
                        
                        {/* Footer Branding from Screenshot */}
                        <div className="mt-16 flex flex-col md:flex-row items-center justify-between gap-8 pt-12 border-t border-slate-200 no-print">
@@ -129,9 +144,9 @@ const App: React.FC = () => {
                                 <i className="fa-solid fa-circle-info text-2xl"></i>
                              </div>
                              <div>
-                                <h4 className="font-bold text-xs text-slate-500 uppercase tracking-widest mb-1">Ton feedback est important !</h4>
+                                <h4 className="font-bold text-xs text-slate-500 uppercase tracking-widest mb-1">Votre avis est important !</h4>
                                 <div className="flex items-center gap-4">
-                                  <span className="text-sm font-bold text-slate-700 italic">Est-ce que j'ai répondu à ta question ?</span>
+                                  <span className="text-sm font-bold text-slate-700 italic">Est-ce que j'ai répondu à votre question ?</span>
                                   <div className="flex gap-2">
                                     <button className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center hover:bg-emerald-100"><i className="fa-solid fa-thumbs-up"></i></button>
                                     <button className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center hover:bg-red-100"><i className="fa-solid fa-thumbs-down"></i></button>

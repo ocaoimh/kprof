@@ -26,7 +26,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({ history, onSelec
               }`}
               onClick={() => onSelect(plan)}
             >
-              <p className="text-sm truncate pr-6">{plan.question}</p>
+              <p className="text-sm truncate pr-6">{plan.result?.question || plan.query || "Question sans titre"}</p>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
