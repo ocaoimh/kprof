@@ -2,13 +2,11 @@
 <img width="1200" height="475" alt="" src="https://raw.githubusercontent.com/ocaoimh/kprof/refs/heads/main/screenshot.png" />
 </div>
 
-https://github.com/ocaoimh/kprof/screenshot.png
-
 # Run and deploy your AI Studio app
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1Y8HdDwXEEohhR0wjcIfwKPUc88PcVixy
+View your app in AI Studio: https://ai.studio/apps/drive/1Y8HdDwXEEohhR0wjcIfwKPUc88PcVixy?fullscreenApplet=true
 
 ## Run Locally
 
